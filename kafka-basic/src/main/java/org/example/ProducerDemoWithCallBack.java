@@ -29,15 +29,19 @@ public class ProducerDemoWithCallBack {
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 
         for (int i=0; i<10; i++ ) {
-            ProducerRecord<String, String> producerRecord =
-                new ProducerRecord<>("demo_java", "hello world " + Integer.toString(i));
 
-            // send data - asynchronous
+            String topic = "demo_java";
+            String value = "hello world " + i;
+            String key = "id_" + i;
+
+            ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topic, key, value);
+
             producer.send(producerRecord, new Callback() {
                 public void onCompletion(RecordMetadata recordMetadata, Exception e) {
                     if (e == null) {
                         log.info("Received new metadata. \n" +
                             "Topic:" + recordMetadata.topic() + "\n" +
+                            "Key:" + producerRecord.key() + "\n" +
                             "Partition: " + recordMetadata.partition() + "\n" +
                             "Offset: " + recordMetadata.offset() + "\n" +
                             "Timestamp: " + recordMetadata.timestamp());
@@ -46,12 +50,6 @@ public class ProducerDemoWithCallBack {
                     }
                 }
             });
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
 
         // Flush data - sync
