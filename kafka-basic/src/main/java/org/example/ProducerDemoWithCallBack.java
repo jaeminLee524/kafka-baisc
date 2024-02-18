@@ -29,9 +29,8 @@ public class ProducerDemoWithCallBack {
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 
         for (int i=0; i<10; i++ ) {
-            // create a producer record
             ProducerRecord<String, String> producerRecord =
-                new ProducerRecord<>("demo_java", "hello world " + i);
+                new ProducerRecord<>("demo_java", "hello world " + Integer.toString(i));
 
             // send data - asynchronous
             producer.send(producerRecord, new Callback() {
@@ -47,6 +46,12 @@ public class ProducerDemoWithCallBack {
                     }
                 }
             });
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         // Flush data - sync
