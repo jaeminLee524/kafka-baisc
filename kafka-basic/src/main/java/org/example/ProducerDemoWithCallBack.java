@@ -28,24 +28,26 @@ public class ProducerDemoWithCallBack {
         // Create Kafka Producer
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 
-        // Create a producer record
-        ProducerRecord<String, String> producerRecord = new ProducerRecord<>("first_topic", "hello world");
+        for (int i=0; i<10; i++ ) {
+            // create a producer record
+            ProducerRecord<String, String> producerRecord =
+                new ProducerRecord<>("demo_java", "hello world " + i);
 
-        // Send the data - async
-        producer.send(producerRecord, new Callback() {
-            @Override
-            public void onCompletion(RecordMetadata recordMetadata, Exception e) {
-                if (e == null) {
-                    log.info("Received new metadata. \n" +
-                        "Topic:" + recordMetadata.topic() + "\n" +
-                        "Partition: " + recordMetadata.partition() + "\n" +
-                        "Offset: " + recordMetadata.offset() + "\n" +
-                        "Timestamp: " + recordMetadata.timestamp());
-                } else {
-                    log.error("Error while producing", e);
+            // send data - asynchronous
+            producer.send(producerRecord, new Callback() {
+                public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+                    if (e == null) {
+                        log.info("Received new metadata. \n" +
+                            "Topic:" + recordMetadata.topic() + "\n" +
+                            "Partition: " + recordMetadata.partition() + "\n" +
+                            "Offset: " + recordMetadata.offset() + "\n" +
+                            "Timestamp: " + recordMetadata.timestamp());
+                    } else {
+                        log.error("Error while producing", e);
+                    }
                 }
-            }
-        });
+            });
+        }
 
         // Flush data - sync
         producer.flush();
