@@ -59,8 +59,6 @@ public class ConsumerDemoWithShutdown {
             // poll for new data
             while (true) {
                 // 카프카에 데이터가 없을 경우 1초를 기다립니다.
-                log.info("polling");
-
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
 
                 for (ConsumerRecord<String, String> record : records) {
